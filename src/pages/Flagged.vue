@@ -23,10 +23,17 @@
     </div>
     <div class="m_md:hidden flex bg-offBlack justify-center pt-[70px]">
       <!-- Mobile view of ENS -->
-      <button
+      <button @click="toggleAliasBox" 
         class="font-['VT323'] bg-red font-[400] text-[32px] leading-[36px] text-black text-center shadow-[8px_8px_0px_#000] border-black border-[3px] py-[5px] px-[12px] min-w-[200px]">
         <EnsReverse :alias="ens" />
       </button>
+       <!--mobile matadata-->
+      <div v-if="showAliasBox" class="absolute left-1/2 transform -translate-x-1/2 p-4  bg-red font-['VT323'] font-normal text-[23px] leading-[26px] text-black text-center border-black border-[4px]  hover:brightness-90 py-[5px] px-[12px] min-w-[200px]">
+        <button @click="toggleAliasBox" class="absolute  right-[10px] text-xl font-bold">&times;</button>
+        <ul>
+          
+        </ul>
+      </div>
       <button
         @click="copyToClipboard"
         class="text-black font-normal bg-red text-[32px] border-[3px] border-black leading-[36px] py-[9px] px-[22px] ml-[22px] shadow-[8px_8px_0px_#000]">
@@ -39,11 +46,17 @@
           class="shadow-[8px_8px_0px_#000] hover:border-black hover:text-black hover:bg-red bg-transparent font-['VT323'] font-[400] text-[23px] leading-[26px] text-red text-center border-silver border-[4px] py-[9px] px-[12px]">
           second
         </button>
-        <!-- Desktop view of ENS -->
-        <div
-          class="md:hidden font-['VT323'] bg-red font-[400] text-[32px] leading-[36px] text-black text-center shadow-[8px_8px_0px_#000] border-black border-[3px] py-[5px] px-[12px] min-w-[200px]">
-          <EnsReverse :alias="ens" />
-        </div>
+         <!--Deskktop view of ENS-->
+         <button @click="toggleAliasBox" class="md:hidden font-['VT323']  bg-red font-[400] text-[32px] leading-[36px] text-black text-center shadow-[8px_8px_0px_#000] border-black border-[3px] py-[5px] px-[12px] min-w-[200px]">
+      <EnsReverse :alias="ens" />
+    </button>
+    <!--Desktop matadata-->
+    <div v-if="showAliasBox" class="md:hidden absolute left-1/2 transform -translate-x-1/2 p-4  bg-red font-['VT323'] font-normal text-[23px] leading-[26px] text-black text-center border-black border-[4px]  hover:brightness-90 py-[5px] px-[12px] min-w-[200px]">
+      <button @click="toggleAliasBox" class="absolute  right-[10px] text-xl font-bold">&times;</button>
+      <ul>
+
+      </ul>
+    </div>
         <div>
           <div v-if="store.getWalletAddr?.toLowerCase() != OWNER_ADDR.toLowerCase()">
             <a href="https://bit.ly/get-vrfd" target="_blank"
@@ -70,7 +83,11 @@
 import { storeToRefs } from "pinia";
 import { useStore } from "../store";
 import EnsReverse from '../components/ENSReverse.vue';
+const showAliasBox = ref(false);
 
+function toggleAliasBox() {
+  showAliasBox.value = !showAliasBox.value;
+}
 const store = useStore();
 const { walletAddr } = storeToRefs(store);
 
@@ -106,6 +123,7 @@ export default {
       footerColor: "white",
       votes: 0,
       ens: "no alias",
+      ensData: null, // Initialize the ensData variable to null
     };
   },
   computed: {
@@ -135,13 +153,16 @@ export default {
       getENS(this.$route.params.addr as string)
       .then(res => {
         if (res.success) {
-          this.ens = res.name
+          this.ens = res.name;
+          this.ensData = res.data; // Update the ensData with the API response
         } else {
           this.ens = 'no alias'
+          this.ensData = null; // Reset ensData if there is no alias
         }
       })
       .catch(e => {
         console.log(e);
+        this.ensData = null; // Reset ensData if there is no alias
       })
   },
   methods: {
