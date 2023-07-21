@@ -23,10 +23,21 @@
     </div>
     <div class="m_md:hidden flex bg-offWhite justify-center pt-[70px]">
       <!-- Mobile view of ENS -->
-      <button
+      <button @click="toggleAliasBox"
         class="font-['VT323'] bg-green font-[400] text-[32px] leading-[36px] text-black text-center shadow-[8px_8px_0px_#000] border-black border-[3px] py-[5px] px-[12px] min-w-[200px]">
         <EnsReverse :alias="ens" />
       </button>
+      <!--mobile matadata-->
+      <div v-if="showAliasBox" class="absolute left-1/2 transform -translate-x-1/2 p-4 bg-green font-['VT323'] font-normal text-[23px] leading-[26px] text-black text-center border-black border-[4px]  hover:brightness-90 py-[5px] px-[12px] min-w-[200px]">
+      <button @click="toggleAliasBox" class="absolute  right-[10px] text-xl font-bold">&times;</button>
+      <ul>
+        <li>Twitter</li>
+        <li>Discord</li>
+        <li>Medium</li>
+        <li>Telegram</li>
+        <li>Tik-Tok</li>
+      </ul>
+    </div>
       <button
         @click="copyToClipboard"
         class="text-black font-normal bg-green text-[32px] border-[3px] border-black leading-[36px] py-[9px] px-[22px] ml-[22px] shadow-[8px_8px_0px_#000]">
@@ -49,12 +60,21 @@
             </button>
           </div>
         </div>
-
-        <!-- Desktop view of ENS -->
-        <div
-            class="md:hidden font-['VT323'] bg-green font-[400] text-[32px] leading-[36px] text-black text-center shadow-[8px_8px_0px_#000] border-black border-[3px] py-[5px] px-[12px] min-w-[200px]">
-            <EnsReverse :alias="ens" />
-        </div>
+        <!--Deskktop view of ENS-->
+        <button @click="toggleAliasBox" class="md:hidden font-['VT323'] bg-green font-[400] text-[32px] leading-[36px] text-black text-center shadow-[8px_8px_0px_#000] border-black border-[3px] py-[5px] px-[12px] min-w-[200px]">
+      <EnsReverse :alias="ens" />
+    </button>
+    <!--Desktop matadata-->
+    <div v-if="showAliasBox" class="md:hidden absolute left-1/2 transform -translate-x-1/2 p-4 bg-green font-['VT323'] font-normal text-[23px] leading-[26px] text-black text-center border-black border-[4px]  hover:brightness-90 py-[5px] px-[12px] min-w-[200px]">
+      <button @click="toggleAliasBox" class="absolute  right-[10px] text-xl font-bold">&times;</button>
+      <ul>
+        <li>Twitter</li>
+        <li>Discord</li>
+        <li>Medium</li>
+        <li>Telegram</li>
+        <li>Tik-Tok</li>
+      </ul>
+    </div>
         <div>
           <button @click="upvote"
             class="bg-green font-['VT323'] font-normal text-[23px] leading-[26px] text-black text-center border-black border-[4px] py-[9px] px-[12px]  hover:brightness-90">
@@ -72,8 +92,12 @@
 import { storeToRefs } from "pinia";
 import { useStore } from "../store";
 import EnsReverse from '../components/ENSReverse.vue';
+const showAliasBox = ref(false);
 
 
+function toggleAliasBox() {
+  showAliasBox.value = !showAliasBox.value;
+}
 const store = useStore();
 const { walletAddr } = storeToRefs(store);
 
